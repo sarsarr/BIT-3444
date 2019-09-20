@@ -12,14 +12,13 @@ Public Class frmRegistry
                 MessageBox.Show("No more records allowed.", "Record Limit")
             Else
                 count += 1
-                lblDatabase.Text &= txtFirstName.Text & " (" & txtLastName.Text & ") is a " &
-                    GetAge(age) & ", class " & vbCrLf
-
+                lblDatabase.Text &= txtFirstName.Text & " " & txtLastName.Text & ", " &
+                    GetAge(age) & vbCrLf 'goes to new line 
             End If
         End If
     End Sub
 
-    Private Function GetAge(age As Integer) As String
+    Private Function GetAge(ByRef age As Integer) As String
 
         Select Case age
             Case 0 To 17
@@ -32,8 +31,9 @@ Public Class frmRegistry
                 Return vbNull
         End Select
     End Function
+
     ' wiring events to event handlers
-    Private Sub frmUserInput_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub frmRegistry(sender As Object, e As EventArgs) Handles MyBase.Load
         WireEvents()
     End Sub
     'checks first name for errors
@@ -43,8 +43,10 @@ Public Class frmRegistry
             If txtFirstName.Text = "" Then
                 'throw a note for this exception
                 Throw New Exception("Missing First Name")
-                Return True 'Green flag, there're no exceptions 
+
             End If
+            Return True 'Green flag, there're no exceptions 
+
         Catch ex As Exception 'What you can do with the exception
             MessageBox.Show(ex.Message, "Input Error") '.Message= Displays the message property is the string of the expection thrown Ln 73.... 2nt property isfor bar
             txtFirstName.Focus()
@@ -58,18 +60,18 @@ Public Class frmRegistry
             If txtLastName.Text = "" Then
                 'throw a note for this exception
                 Throw New Exception("Missing Last Name")
-                Return True 'Green flag, there're no exceptions 
             End If
+            Return True 'Green flag, there're no exceptions
         Catch ex As Exception 'What you can do with the exception
             MessageBox.Show(ex.Message, "Input Error") '.Message= Displays the message property is the string of the expection thrown Ln 73.... 2nt property isfor bar
             txtLastName.Focus()
-            Return False 'red flag
         End Try
+        Return False 'red flag
     End Function
     'wires events to event handlers
     Private Sub WireEvents()
         'when you type and hit the tab and LEAVE that control it is an event
-        AddHandler txtFirstName.Leave, AddressOf CheckFirstName 'as soon as you Leave you check the company before continuing 
+        AddHandler txtFirstName.Leave, AddressOf CheckFirstName 'as soon as you Leave you check firstname before continuing 
         AddHandler txtLastName.Leave, AddressOf CheckLastName
         AddHandler txtAge.Leave, AddressOf CheckAgeNoArg
     End Sub
@@ -92,7 +94,7 @@ Public Class frmRegistry
 
             'Review video
         Catch ex As FormatException 'Place more specific error handelers first 
-            MessageBox.Show("Error is age", ex.GetType.ToString)
+            MessageBox.Show("Missing input for age", ex.GetType.ToString)
             txtAge.Focus()
             Return False
 
@@ -104,3 +106,4 @@ Public Class frmRegistry
         End Try
     End Function
 End Class
+
