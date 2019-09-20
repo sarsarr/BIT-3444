@@ -1,0 +1,106 @@
+Public Class frmRegistry
+    Dim count As Integer
+
+    ' event handler for the Enter button
+    Private Sub btnEnter_Click(sender As Object, e As EventArgs) Handles btnEnter.Click  'this sub handles the event button entered
+        Dim age As Integer
+        'AndAlso is the logic where if one fails then it returns false 
+        If CheckFirstName() AndAlso
+           CheckLastName() AndAlso
+           CheckAge(age) Then
+            If count = 10 Then
+                MessageBox.Show("No more records allowed.", "Record Limit")
+            Else
+                count += 1
+                lblDatabase.Text &= txtFirstName.Text & " (" & txtLastName.Text & ") is a " &
+                    GetAge(age) & ", class " & vbCrLf
+
+            End If
+        End If
+    End Sub
+
+    Private Function GetAge(age As Integer) As String
+
+        Select Case age
+            Case 0 To 17
+                Return "Junior"
+            Case 18 To 59
+                Return "Adult"
+            Case Is >= 60
+                Return "Senior"
+            Case Else
+                Return vbNull
+        End Select
+    End Function
+    ' wiring events to event handlers
+    Private Sub frmUserInput_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        WireEvents()
+    End Sub
+    'checks first name for errors
+    Private Function CheckFirstName() As Boolean
+        Try
+            'we don't want a blank company, this is the exception
+            If txtFirstName.Text = "" Then
+                'throw a note for this exception
+                Throw New Exception("Missing First Name")
+                Return True 'Green flag, there're no exceptions 
+            End If
+        Catch ex As Exception 'What you can do with the exception
+            MessageBox.Show(ex.Message, "Input Error") '.Message= Displays the message property is the string of the expection thrown Ln 73.... 2nt property isfor bar
+            txtFirstName.Focus()
+            Return False 'red flag
+        End Try
+    End Function
+    'checks last name for errors
+    Private Function CheckLastName() As Boolean
+        Try
+            'we don't want a blank company, this is the exception
+            If txtLastName.Text = "" Then
+                'throw a note for this exception
+                Throw New Exception("Missing Last Name")
+                Return True 'Green flag, there're no exceptions 
+            End If
+        Catch ex As Exception 'What you can do with the exception
+            MessageBox.Show(ex.Message, "Input Error") '.Message= Displays the message property is the string of the expection thrown Ln 73.... 2nt property isfor bar
+            txtLastName.Focus()
+            Return False 'red flag
+        End Try
+    End Function
+    'wires events to event handlers
+    Private Sub WireEvents()
+        'when you type and hit the tab and LEAVE that control it is an event
+        AddHandler txtFirstName.Leave, AddressOf CheckFirstName 'as soon as you Leave you check the company before continuing 
+        AddHandler txtLastName.Leave, AddressOf CheckLastName
+        AddHandler txtAge.Leave, AddressOf CheckAgeNoArg
+    End Sub
+    'no arg version of 
+    Private Function CheckAgeNoArg() As Boolean
+        Dim age As Integer
+        Return CheckAge(age)
+    End Function
+
+    'chekcs market cap input for errors
+    Private Function CheckAge(ByRef age As Integer) As Boolean
+        Try
+            'marketCap = CDec(txtMarketCap.Text) 'may throw invalid cast exception if an alpha numeric is tried to be casted as a decimal
+            'Using parse instead of TryParse
+            age = Integer.Parse(txtAge.Text) 'May thro format exception
+            If age < 0 Then
+                Throw New Exception("Age can't be less than 0.")
+            End If
+            Return True
+
+            'Review video
+        Catch ex As FormatException 'Place more specific error handelers first 
+            MessageBox.Show("Error is age", ex.GetType.ToString)
+            txtAge.Focus()
+            Return False
+
+        Catch ex As Exception 'More generic exception
+            MessageBox.Show(ex.Message, ex.GetType.ToString)
+            txtAge.Focus()
+            Return False
+
+        End Try
+    End Function
+End Class
